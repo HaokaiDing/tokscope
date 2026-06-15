@@ -13,15 +13,20 @@ Inspired by [codex-wrapped](https://github.com/numman-ali/codex-wrapped) and
 
 ## Install & run
 
-Once published, no clone needed:
+No clone, no PyPI — run straight from GitHub with [uv](https://docs.astral.sh/uv/):
 
 ```bash
-uvx tokscope            # run without installing (needs uv)
-pipx install tokscope   # or install as a CLI
+uvx --from "git+https://github.com/HaokaiDing/tokscope" tokscope
+```
+
+Or install it as a CLI with pipx:
+
+```bash
+pipx install "git+https://github.com/HaokaiDing/tokscope"
 tokscope
 ```
 
-Or from source:
+Or clone and run from source:
 
 ```bash
 git clone https://github.com/HaokaiDing/tokscope && cd tokscope
