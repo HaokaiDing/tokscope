@@ -1,8 +1,8 @@
 import sqlite3
 import pytest
 from datetime import datetime, timezone
-from tokscope.adapters.base import UsageRecord
-from tokscope.pricing import Pricing, normalize_model
+from tokology.adapters.base import UsageRecord
+from tokology.pricing import Pricing, normalize_model
 
 
 @pytest.fixture

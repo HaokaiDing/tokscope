@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from pathlib import Path
-from tokscope.adapters.base import UsageRecord, ActivityPing, parse_iso, project_name
-from tokscope.adapters.claude_code import ClaudeCodeAdapter
+from tokology.adapters.base import UsageRecord, ActivityPing, parse_iso, project_name
+from tokology.adapters.claude_code import ClaudeCodeAdapter
 
 FIX = Path(__file__).parent / "fixtures" / "claude"
 

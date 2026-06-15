@@ -1,7 +1,7 @@
 from pathlib import Path
 from datetime import datetime, timezone
-from tokscope.adapters.base import UsageRecord, ActivityPing
-from tokscope import stats, render
+from tokology.adapters.base import UsageRecord, ActivityPing
+from tokology import stats, render
 
 
 def test_render_self_contained(tmp_path):
@@ -14,5 +14,5 @@ def test_render_self_contained(tmp_path):
     html = Path(out).read_text(encoding="utf-8")
     assert out.exists()
     assert "http://" not in html and "https://" not in html
-    assert "tokscope" in html.lower()
-    assert "__TOKSCOPE_DATA__" not in html and "__TOKSCOPE_LANG__" not in html
+    assert "tokology" in html.lower()
+    assert "__TOKOLOGY_DATA__" not in html and "__TOKOLOGY_LANG__" not in html

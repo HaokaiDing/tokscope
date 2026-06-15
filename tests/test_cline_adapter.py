@@ -1,5 +1,5 @@
 from pathlib import Path
-from tokscope.adapters.cline import ClineAdapter
+from tokology.adapters.cline import ClineAdapter
 
 FIX = Path(__file__).parent / "fixtures" / "cline"
 

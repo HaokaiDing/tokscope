@@ -8,7 +8,7 @@ from pathlib import Path
 from .adapters.base import UsageRecord
 
 DEFAULT_DB = Path.home() / ".cc-switch" / "cc-switch.db"
-# Bundled snapshot of cc-switch's community price table, so tokscope prices
+# Bundled snapshot of cc-switch's community price table, so tokology prices
 # common models out of the box even without cc-switch installed.
 DEFAULTS_PATH = Path(__file__).parent / "pricing_defaults.json"
 

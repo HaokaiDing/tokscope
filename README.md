@@ -1,6 +1,6 @@
-# tokscope
+# tokology
 
-A local, zero-daemon **token-usage recap** for your AI coding tools. tokscope
+A local, zero-daemon **token-usage recap** for your AI coding tools. tokology
 reads the logs your CLIs already keep on disk, prices them, and renders one
 clean, shareable card — part dashboard, part "wrapped". Nothing is uploaded;
 your data never leaves your machine.
@@ -9,30 +9,30 @@ Inspired by [codex-wrapped](https://github.com/numman-ali/codex-wrapped) and
 [opencode-wrapped](https://github.com/moddi3/opencode-wrapped), but aggregates
 **across tools** in one card.
 
-![tokscope demo card (sample data)](assets/demo.png)
+![tokology demo card (sample data)](assets/demo.png)
 
 ## Install & run
 
 No clone, no PyPI — run straight from GitHub with [uv](https://docs.astral.sh/uv/):
 
 ```bash
-uvx --from "git+https://github.com/HaokaiDing/tokscope" tokscope
+uvx --from "git+https://github.com/HaokaiDing/tokology" tokology
 ```
 
 Or install it as a CLI with pipx:
 
 ```bash
-pipx install "git+https://github.com/HaokaiDing/tokscope"
-tokscope
+pipx install "git+https://github.com/HaokaiDing/tokology"
+tokology
 ```
 
 Or clone and run from source:
 
 ```bash
-git clone https://github.com/HaokaiDing/tokscope && cd tokscope
-uv run tokscope                 # opens the card in your browser
-uv run tokscope --png           # also export a shareable PNG (needs Chrome)
-uv run tokscope --month 2026-06 # just one month
+git clone https://github.com/HaokaiDing/tokology && cd tokology
+uv run tokology                 # opens the card in your browser
+uv run tokology --png           # also export a shareable PNG (needs Chrome)
+uv run tokology --month 2026-06 # just one month
 ```
 
 Works on macOS, Linux, and Windows.
@@ -48,7 +48,7 @@ Works on macOS, Linux, and Windows.
 
 ## Supported tools
 
-tokscope aggregates tools that persist token usage **locally**:
+tokology aggregates tools that persist token usage **locally**:
 
 | Tool | Source | Status |
 |---|---|---|
@@ -57,13 +57,13 @@ tokscope aggregates tools that persist token usage **locally**:
 | Cline (VS Code) | each editor's `globalStorage/saoudrizwan.claude-dev/tasks` | tokens + cache |
 | Gemini CLI / OpenCode / Copilot CLI | — | detected, but no local token log to read |
 
-On every run tokscope prints which tools it **detected** vs which actually
+On every run tokology prints which tools it **detected** vs which actually
 **contributed token data**. Tools that don't store usage locally are listed but
 can't be aggregated (they'd need their own export).
 
 ## Pricing
 
-tokscope ships a bundled price table (a snapshot of
+tokology ships a bundled price table (a snapshot of
 [cc-switch](https://github.com/farion1231/cc-switch)'s community `model_pricing`,
 plus a small supplement), so common models are priced **out of the box** — no
 setup. If you have cc-switch installed, its live table takes precedence for the

@@ -18,11 +18,11 @@ def render(data: dict, out_path: Path, lang: str = "en") -> Path:
     # All view logic lives in the card's inline JS; we only inject these values.
     html = TEMPLATE.read_text(encoding="utf-8")
     subs = {
-        "__TOKSCOPE_LANG__": "zh" if lang == "zh" else "en",
-        "__TOKSCOPE_FONT_400__": _font_b64("ibm-plex-mono-400.woff2"),
-        "__TOKSCOPE_FONT_600__": _font_b64("ibm-plex-mono-600.woff2"),
-        "__TOKSCOPE_FONT_700__": _font_b64("ibm-plex-mono-700.woff2"),
-        "__TOKSCOPE_DATA__": json.dumps(data, ensure_ascii=False),
+        "__TOKOLOGY_LANG__": "zh" if lang == "zh" else "en",
+        "__TOKOLOGY_FONT_400__": _font_b64("ibm-plex-mono-400.woff2"),
+        "__TOKOLOGY_FONT_600__": _font_b64("ibm-plex-mono-600.woff2"),
+        "__TOKOLOGY_FONT_700__": _font_b64("ibm-plex-mono-700.woff2"),
+        "__TOKOLOGY_DATA__": json.dumps(data, ensure_ascii=False),
     }
     for key, value in subs.items():
         html = html.replace(key, value)

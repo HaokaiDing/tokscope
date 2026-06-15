@@ -1,5 +1,5 @@
 from pathlib import Path
-from tokscope.adapters.codex import CodexAdapter
+from tokology.adapters.codex import CodexAdapter
 
 FIX = Path(__file__).parent / "fixtures" / "codex"
 

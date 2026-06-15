@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
-from tokscope.adapters.base import UsageRecord
-from tokscope.filters import parse_window, in_window
+from tokology.adapters.base import UsageRecord
+from tokology.filters import parse_window, in_window
 
 
 def _r(month):

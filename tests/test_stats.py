@@ -1,6 +1,6 @@
 from datetime import datetime, timedelta, timezone
-from tokscope.adapters.base import UsageRecord, ActivityPing
-from tokscope import stats
+from tokology.adapters.base import UsageRecord, ActivityPing
+from tokology import stats
 
 
 def _rec(tool, model, day, hour, cost, sid, proj="p", out=10, cr=0):

@@ -1,13 +1,13 @@
 <!doctype html>
-<html lang="__TOKSCOPE_LANG__">
+<html lang="__TOKOLOGY_LANG__">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>tokscope</title>
+<title>tokology</title>
 <style>
-@font-face{font-family:'IBM Plex Mono';font-weight:400;font-display:swap;src:url(data:font/woff2;base64,__TOKSCOPE_FONT_400__) format('woff2');}
-@font-face{font-family:'IBM Plex Mono';font-weight:600;font-display:swap;src:url(data:font/woff2;base64,__TOKSCOPE_FONT_600__) format('woff2');}
-@font-face{font-family:'IBM Plex Mono';font-weight:700;font-display:swap;src:url(data:font/woff2;base64,__TOKSCOPE_FONT_700__) format('woff2');}
+@font-face{font-family:'IBM Plex Mono';font-weight:400;font-display:swap;src:url(data:font/woff2;base64,__TOKOLOGY_FONT_400__) format('woff2');}
+@font-face{font-family:'IBM Plex Mono';font-weight:600;font-display:swap;src:url(data:font/woff2;base64,__TOKOLOGY_FONT_600__) format('woff2');}
+@font-face{font-family:'IBM Plex Mono';font-weight:700;font-display:swap;src:url(data:font/woff2;base64,__TOKOLOGY_FONT_700__) format('woff2');}
 :root{--bg:#f4f2ea;--panel:#ffffff;--line:rgba(0,0,0,.10);--ink:#1c1b22;--dim:#76747e;--cell:rgba(0,0,0,.07);--accent:#e0890a;}
 *{margin:0;padding:0;box-sizing:border-box}
 body{font-family:'IBM Plex Mono','PingFang SC',ui-monospace,monospace;background:var(--bg);color:var(--ink);
@@ -58,9 +58,9 @@ body{font-family:'IBM Plex Mono','PingFang SC',ui-monospace,monospace;background
 </head>
 <body>
 <div class="wrap" id="app"></div>
-<script id="data" type="application/json">__TOKSCOPE_DATA__</script>
+<script id="data" type="application/json">__TOKOLOGY_DATA__</script>
 <script>
-const LANG="__TOKSCOPE_LANG__";
+const LANG="__TOKOLOGY_LANG__";
 const D=JSON.parse(document.getElementById('data').textContent);
 const compact=n=>new Intl.NumberFormat('en-US',{notation:'compact',maximumFractionDigits:1}).format(n||0);
 const money=n=>'$'+Math.round(n||0).toLocaleString('en-US');
@@ -123,7 +123,7 @@ const persTitle=tags.length?tags.map(k=>P[k]||k).join(' · '):P.steady;
 const cachePct=t.tokens?Math.round(D.cache.read_tokens/t.tokens*100):0;
 
 document.getElementById('app').innerHTML=`
-<div class="brand"><h1>tokscope</h1><div class="yr">${S.sub(tools.length)}</div></div>
+<div class="brand"><h1>tokology</h1><div class="yr">${S.sub(tools.length)}</div></div>
 
 <div class="grid3">
   <div class="panel"><div class="lab">${S.started}</div><div class="med">${t.span?t.span.start:'—'}</div><div class="big">${S.daysAgo(daysAgo)}</div></div>

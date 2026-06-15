@@ -113,7 +113,7 @@ def build_adapters(args):
 
 
 def run(argv=None) -> int:
-    p = argparse.ArgumentParser(prog="tokscope")
+    p = argparse.ArgumentParser(prog="tokology")
     p.add_argument("--year", type=int)
     p.add_argument("--month")           # YYYY-MM
     p.add_argument("--since")           # YYYY-MM-DD

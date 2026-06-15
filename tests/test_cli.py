@@ -1,5 +1,5 @@
 from pathlib import Path
-from tokscope import cli
+from tokology import cli
 
 FIX = Path(__file__).parent / "fixtures"
 
@@ -20,4 +20,4 @@ def test_cli_run_on_fixtures(tmp_path):
     assert code == 0
     assert out.exists()
     html = out.read_text(encoding="utf-8")
-    assert "tokscope" in html.lower()
+    assert "tokology" in html.lower()

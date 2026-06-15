@@ -64,7 +64,7 @@ wheels = [
 ]
 
 [[package]]
-name = "tokscope"
+name = "tokology"
 version = "0.1.0"
 source = { editable = "." }
 

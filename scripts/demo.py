@@ -8,8 +8,8 @@ from __future__ import annotations
 import random
 from datetime import date, timedelta
 from pathlib import Path
-from tokscope import render
-from tokscope.cli import html_to_png
+from tokology import render
+from tokology.cli import html_to_png
 
 ROOT = Path(__file__).resolve().parent.parent
 
