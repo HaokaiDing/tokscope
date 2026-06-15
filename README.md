@@ -9,6 +9,8 @@ Inspired by [codex-wrapped](https://github.com/numman-ali/codex-wrapped) and
 [opencode-wrapped](https://github.com/moddi3/opencode-wrapped), but aggregates
 **across tools** in one card.
 
+![tokscope demo card (sample data)](assets/demo.png)
+
 ## Install & run
 
 Requires [uv](https://docs.astral.sh/uv/).

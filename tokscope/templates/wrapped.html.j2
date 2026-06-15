@@ -91,7 +91,9 @@ function activity(arr){
         if(c===0)bg='var(--cell)';else{const a=Math.round((0.2+Math.log(c+1)/lmax*0.8)*100);bg=`color-mix(in srgb,var(--accent) ${a}%,transparent)`;}}
       cells+=`<i style="background:${bg}"></i>`;cur.setDate(cur.getDate()+1);}
     weeks.push({m,html:`<div class="wk">${cells}</div>`});}
-  let months='',lm=-1;weeks.forEach((w,i)=>{if(w.m!==lm){months+=`<span style="left:${i*16}px">${MON[w.m]}</span>`;lm=w.m;}});
+  let labels=[],lm=-1;weeks.forEach((w,i)=>{if(w.m!==lm){lm=w.m;const x=i*16;
+    if(labels.length&&x-labels[labels.length-1].x<24)labels[labels.length-1]={x,m:w.m};else labels.push({x,m:w.m});}});
+  const months=labels.map(l=>`<span style="left:${l.x}px">${MON[l.m]}</span>`).join('');
   return `<div class="months">${months}</div><div class="hm">${weeks.map(w=>w.html).join('')}</div>`;
 }
 
