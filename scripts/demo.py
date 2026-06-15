@@ -54,13 +54,13 @@ def demo_data() -> dict:
                      {"project": "cli-tool", "count": 920},
                      {"project": "notes-app", "count": 610}],
         "cache": {"read_tokens": 6_820_000_000, "creation_tokens": 310_000_000},
-        "personality": {"title": "夜猫子 · Token 鲸鱼 · 多栖玩家", "icon": "moon"},
+        "personality": {"tags": ["night_owl", "token_whale", "polyglot"], "icon": "moon"},
     }
 
 
 def main():
     out_html = ROOT / "out" / "demo.html"
-    render.render(demo_data(), out_html)
+    render.render(demo_data(), out_html, lang="en")
     png = ROOT / "assets" / "demo.png"
     png.parent.mkdir(parents=True, exist_ok=True)
     result = html_to_png(out_html, png)

@@ -13,7 +13,7 @@ def _font_b64(name: str) -> str:
     return base64.b64encode(f.read_bytes()).decode() if f.exists() else ""
 
 
-def render(data: dict, out_path: Path) -> Path:
+def render(data: dict, out_path: Path, lang: str = "en") -> Path:
     env = Environment(
         loader=FileSystemLoader(str(TEMPLATES)),
         autoescape=select_autoescape(["html"]),
@@ -21,6 +21,7 @@ def render(data: dict, out_path: Path) -> Path:
     tmpl = env.get_template("wrapped.html.j2")
     html = tmpl.render(
         data_json=json.dumps(data, ensure_ascii=False),
+        lang="zh" if lang == "zh" else "en",
         font_400=_font_b64("ibm-plex-mono-400.woff2"),
         font_600=_font_b64("ibm-plex-mono-600.woff2"),
         font_700=_font_b64("ibm-plex-mono-700.woff2"),

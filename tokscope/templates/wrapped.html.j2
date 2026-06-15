@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh">
+<html lang="{{ lang }}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -60,17 +60,33 @@ body{font-family:'IBM Plex Mono','PingFang SC',ui-monospace,monospace;background
 <div class="wrap" id="app"></div>
 <script id="data" type="application/json">{{ data_json|safe }}</script>
 <script>
+const LANG="{{ lang }}";
 const D=JSON.parse(document.getElementById('data').textContent);
 const compact=n=>new Intl.NumberFormat('en-US',{notation:'compact',maximumFractionDigits:1}).format(n||0);
 const money=n=>'$'+Math.round(n||0).toLocaleString('en-US');
 const intf=n=>Math.round(n||0).toLocaleString('en-US');
 const esc=s=>String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 const t=D.totals,rh=D.rhythm;
-const WD=['日','一','二','三','四','五','六'],WDF=['周日','周一','周二','周三','周四','周五','周六'];
+const ZH=LANG==='zh';
 const MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const WD=ZH?['日','一','二','三','四','五','六']:['S','M','T','W','T','F','S'];
+const WDF=ZH?['周日','周一','周二','周三','周四','周五','周六']:['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const S=ZH?{started:'开始于',active:'最活跃的一天',weekly:'星期分布',activity:'活跃热力图',less:'少',more:'多',
+  models:'模型排行榜 · 按用量',tools:'工具版图 · 按花费',sessions:'sessions',messages:'消息轮次',tokens:'总 tokens',
+  activeDays:'活跃天数',streak:'最长连续',cost:'估算花费',unpriced:'未计价',pers:'年度人格',
+  daysAgo:n=>n+' 天前',days:n=>n+' 天',sub:n=>'wrapped <b>2026</b> · 跨 '+n+' 个工具的一年',
+  foot:(u,c)=>u+' 条未计价 · 缓存占 '+c+'% · 花费按 API 价折算 · generated locally — 数据从未离开本机'}:
+  {started:'started',active:'most active day',weekly:'weekly',activity:'activity',less:'less',more:'more',
+  models:'top models · by usage',tools:'top tools · by cost',sessions:'sessions',messages:'messages',tokens:'total tokens',
+  activeDays:'active days',streak:'longest streak',cost:'est. cost',unpriced:'unpriced',pers:'your persona',
+  daysAgo:n=>n+' days ago',days:n=>n+'d',sub:n=>'wrapped <b>2026</b> · '+n+' tools, one year',
+  foot:(u,c)=>u+' unpriced · '+c+'% cache · API-equivalent estimate · generated locally — your data never left this machine'};
+const P=ZH?{night_owl:'夜猫子',token_whale:'Token 鲸鱼',cache_miser:'缓存抠门大师',polyglot:'多栖玩家',steady:'稳健玩家'}:
+  {night_owl:'Night Owl',token_whale:'Token Whale',cache_miser:'Cache Miser',polyglot:'Polyglot',steady:'Steady'};
 const toolName={claude_code:'Claude Code',codex:'Codex',gemini:'Gemini',opencode:'OpenCode',copilot:'Copilot'};
+const fmtDate=dt=>ZH?(dt.getMonth()+1)+'月'+dt.getDate()+'日':MON[dt.getMonth()]+' '+dt.getDate();
 
-function ranks(rows,nameKey,labelFn,valFn){
+function ranks(rows,labelFn,valFn){
   return rows.map((r,i)=>`<div class="rank"><span class="n">${i+1}</span><span class="nm">${esc(labelFn(r))}</span><span class="vl">${valFn(r)}</span></div>`).join('');
 }
 function weekly(arr){
@@ -102,39 +118,42 @@ const daysAgo=start?Math.round((Date.now()-start)/864e5):0;
 const bz=rh.busiest_day?new Date(rh.busiest_day.date+'T00:00:00'):null;
 const tools=D.tool_breakdown.map(x=>({...x,label:toolName[x.tool]||x.tool}));
 const models=D.model_leaderboard.slice(0,5);
+const tags=(D.personality.tags||[]);
+const persTitle=tags.length?tags.map(k=>P[k]||k).join(' · '):P.steady;
+const cachePct=t.tokens?Math.round(D.cache.read_tokens/t.tokens*100):0;
 
 document.getElementById('app').innerHTML=`
-<div class="brand"><h1>tokscope</h1><div class="yr">wrapped <b>2026</b> · 跨 ${tools.length} 个工具的一年</div></div>
+<div class="brand"><h1>tokscope</h1><div class="yr">${S.sub(tools.length)}</div></div>
 
 <div class="grid3">
-  <div class="panel"><div class="lab">开始于</div><div class="med">${t.span?t.span.start:'—'}</div><div class="big">${daysAgo} 天前</div></div>
-  <div class="panel"><div class="lab">最活跃的一天</div><div class="med">${bz?WDF[bz.getDay()]:'—'}</div><div class="big">${bz?(bz.getMonth()+1)+'月'+bz.getDate()+'日':'—'}</div></div>
-  <div class="panel"><div class="lab">星期分布</div><div class="weekly">${weekly(D.weekday)}</div></div>
+  <div class="panel"><div class="lab">${S.started}</div><div class="med">${t.span?t.span.start:'—'}</div><div class="big">${S.daysAgo(daysAgo)}</div></div>
+  <div class="panel"><div class="lab">${S.active}</div><div class="med">${bz?WDF[bz.getDay()]:'—'}</div><div class="big">${bz?fmtDate(bz):'—'}</div></div>
+  <div class="panel"><div class="lab">${S.weekly}</div><div class="weekly">${weekly(D.weekday)}</div></div>
 </div>
 
 <div class="act">
-  <div class="hd">活跃热力图</div>
+  <div class="hd">${S.activity}</div>
   <div class="hmwrap">${activity(D.heatmap)}</div>
-  <div class="legend">少 <i style="background:var(--cell)"></i><i style="background:color-mix(in srgb,var(--accent) 35%,transparent)"></i><i style="background:color-mix(in srgb,var(--accent) 65%,transparent)"></i><i style="background:var(--accent)"></i> 多</div>
+  <div class="legend">${S.less} <i style="background:var(--cell)"></i><i style="background:color-mix(in srgb,var(--accent) 35%,transparent)"></i><i style="background:color-mix(in srgb,var(--accent) 65%,transparent)"></i><i style="background:var(--accent)"></i> ${S.more}</div>
 </div>
 
 <div class="grid2">
-  <div class="panel"><div class="lab" style="margin-bottom:6px">模型排行榜 · 按用量</div>
-    ${ranks(models,'model',x=>x.model,x=>x.priced?money(x.cost_usd):'未计价')}</div>
-  <div class="panel"><div class="lab" style="margin-bottom:6px">工具版图 · 按花费</div>
-    ${ranks(tools,'label',x=>x.label,x=>money(x.cost_usd))}</div>
+  <div class="panel"><div class="lab" style="margin-bottom:6px">${S.models}</div>
+    ${ranks(models,x=>x.model,x=>x.priced?money(x.cost_usd):S.unpriced)}</div>
+  <div class="panel"><div class="lab" style="margin-bottom:6px">${S.tools}</div>
+    ${ranks(tools,x=>x.label,x=>money(x.cost_usd))}</div>
 </div>
 
 <div class="tiles">
-  <div class="panel"><div class="lab">sessions</div><div class="big">${compact(t.sessions)}</div></div>
-  <div class="panel"><div class="lab">消息轮次</div><div class="big">${compact(t.messages)}</div></div>
-  <div class="panel"><div class="lab">总 tokens</div><div class="big">${compact(t.tokens)}</div></div>
-  <div class="panel"><div class="lab">活跃天数</div><div class="big">${t.active_days}</div></div>
-  <div class="panel"><div class="lab">最长连续</div><div class="big">${rh.longest_streak} 天</div></div>
-  <div class="panel"><div class="lab">估算花费</div><div class="big">${money(t.cost_usd)}</div></div>
+  <div class="panel"><div class="lab">${S.sessions}</div><div class="big">${compact(t.sessions)}</div></div>
+  <div class="panel"><div class="lab">${S.messages}</div><div class="big">${compact(t.messages)}</div></div>
+  <div class="panel"><div class="lab">${S.tokens}</div><div class="big">${compact(t.tokens)}</div></div>
+  <div class="panel"><div class="lab">${S.activeDays}</div><div class="big">${t.active_days}</div></div>
+  <div class="panel"><div class="lab">${S.streak}</div><div class="big">${S.days(rh.longest_streak)}</div></div>
+  <div class="panel"><div class="lab">${S.cost}</div><div class="big">${money(t.cost_usd)}</div></div>
 </div>
 
-<div class="ft">年度人格 · <b>${esc(D.personality.title)}</b><br>${intf(t.unpriced_sessions)} 条未计价 · 缓存占 ${t.tokens?Math.round(D.cache.read_tokens/t.tokens*100):0}% · 花费按 API 价折算 · generated locally — 数据从未离开本机</div>`;
+<div class="ft">${S.pers} · <b>${esc(persTitle)}</b><br>${S.foot(intf(t.unpriced_sessions),cachePct)}</div>`;
 // true content height (viewport-independent) so the PNG export crops exactly
 const _w=document.getElementById('app').getBoundingClientRect();
 document.documentElement.setAttribute('data-h', String(Math.ceil(_w.height)+44+32));

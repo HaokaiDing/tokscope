@@ -1,4 +1,5 @@
 from __future__ import annotations
+import json
 import re
 import shutil
 import sqlite3
@@ -7,6 +8,9 @@ from pathlib import Path
 from .adapters.base import UsageRecord
 
 DEFAULT_DB = Path.home() / ".cc-switch" / "cc-switch.db"
+# Bundled snapshot of cc-switch's community price table, so tokscope prices
+# common models out of the box even without cc-switch installed.
+DEFAULTS_PATH = Path(__file__).parent / "pricing_defaults.json"
 
 # Explicit aliases for ids that don't normalize cleanly.
 ALIASES: dict[str, str] = {
@@ -39,6 +43,15 @@ def _to_float(x) -> float:
         return 0.0
 
 
+def _load_defaults() -> dict[str, dict[str, float]]:
+    try:
+        raw = json.loads(DEFAULTS_PATH.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    return {normalize_model(k): {kk: _to_float(vv) for kk, vv in v.items()}
+            for k, v in raw.items()}
+
+
 class Pricing:
     def __init__(self, table: dict[str, dict[str, float]]):
         self.table = table
@@ -46,7 +59,9 @@ class Pricing:
     @classmethod
     def from_sqlite(cls, db_path: Path = DEFAULT_DB) -> "Pricing":
         db_path = Path(db_path)
-        table: dict[str, dict[str, float]] = {}
+        table: dict[str, dict[str, float]] = _load_defaults()   # bundled snapshot
+        for k, v in BUILTIN_PRICES.items():
+            table.setdefault(k, v)                              # fill gaps (e.g. Fable 5)
         if db_path.exists():
             with tempfile.TemporaryDirectory() as td:
                 copy = Path(td) / "p.sqlite"
@@ -61,13 +76,10 @@ class Pricing:
                 finally:
                     con.close()
             for mid, i, o, cr, cc in rows:
-                table[normalize_model(mid)] = {
+                table[normalize_model(mid)] = {   # live cc-switch overrides defaults
                     "input": _to_float(i), "output": _to_float(o),
                     "cache_read": _to_float(cr), "cache_creation": _to_float(cc),
                 }
-        # cc-switch wins; builtins fill any model it doesn't carry (e.g. Fable 5)
-        for k, v in BUILTIN_PRICES.items():
-            table.setdefault(k, v)
         return cls(table)
 
     def rate_for(self, model: str) -> dict[str, float] | None:

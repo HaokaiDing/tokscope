@@ -13,17 +13,28 @@ Inspired by [codex-wrapped](https://github.com/numman-ali/codex-wrapped) and
 
 ## Install & run
 
-Requires [uv](https://docs.astral.sh/uv/).
+Once published, no clone needed:
 
 ```bash
-uv run tokscope                 # all-time, opens the card in your browser
+uvx tokscope            # run without installing (needs uv)
+pipx install tokscope   # or install as a CLI
+tokscope
+```
+
+Or from source:
+
+```bash
+git clone https://github.com/HaokaiDing/tokscope && cd tokscope
+uv run tokscope                 # opens the card in your browser
 uv run tokscope --png           # also export a shareable PNG (needs Chrome)
 uv run tokscope --month 2026-06 # just one month
-uv run tokscope --year 2026 --no-open --out out/2026.html
 ```
+
+Works on macOS, Linux, and Windows.
 
 ## Flags
 - `--year N` / `--month YYYY-MM` / `--since YYYY-MM-DD` — time window
+- `--lang en|zh` — card language (default: from system locale)
 - `--png` — also render a 2x shareable PNG next to the HTML (via headless Chrome)
 - `--out PATH` — output file (default `out/wrapped-YYYYMMDD.html`)
 - `--no-open` — don't auto-open
@@ -32,13 +43,13 @@ uv run tokscope --year 2026 --no-open --out out/2026.html
 
 ## Supported tools
 
-tokscope can only aggregate tools that persist token usage **locally**:
+tokscope aggregates tools that persist token usage **locally**:
 
 | Tool | Source | Status |
 |---|---|---|
 | Claude Code | `~/.claude/projects/**/*.jsonl` | tokens + cache |
 | Codex CLI | `~/.codex/sessions/**/rollout-*.jsonl` | tokens + cache |
-| Cline (VS Code) | `…/globalStorage/saoudrizwan.claude-dev/tasks` | tokens + cache |
+| Cline (VS Code) | each editor's `globalStorage/saoudrizwan.claude-dev/tasks` | tokens + cache |
 | Gemini CLI / OpenCode / Copilot CLI | — | detected, but no local token log to read |
 
 On every run tokscope prints which tools it **detected** vs which actually
@@ -47,11 +58,13 @@ can't be aggregated (they'd need their own export).
 
 ## Pricing
 
-Costs are estimated from [cc-switch](https://github.com/farion1231/cc-switch)'s
-local `model_pricing` table when present, with a small built-in supplement for
-models it doesn't carry yet (e.g. Claude Fable 5). Subscription/gateway usage is
-shown as an **API-equivalent estimate** — real spend is usually lower. Models
-with no known price are counted in tokens and labelled "未计价" (unpriced).
+tokscope ships a bundled price table (a snapshot of
+[cc-switch](https://github.com/farion1231/cc-switch)'s community `model_pricing`,
+plus a small supplement), so common models are priced **out of the box** — no
+setup. If you have cc-switch installed, its live table takes precedence for the
+freshest numbers. Subscription/gateway usage is shown as an **API-equivalent
+estimate** — real spend is usually lower. Models with no known price are counted
+in tokens and labelled "unpriced".
 
 ## How it works
 

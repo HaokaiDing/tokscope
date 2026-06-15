@@ -1,5 +1,7 @@
 from __future__ import annotations
 import argparse
+import os
+import platform
 import re
 import shutil
 import sys
@@ -15,22 +17,46 @@ from .adapters.cline import ClineAdapter, default_task_dirs
 from .detect import detect_installed, DISPLAY
 
 
-CHROME_CANDIDATES = [
-    "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
-    "/Applications/Chromium.app/Contents/MacOS/Chromium",
-    "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser",
-]
+def _chrome_candidates() -> list[str]:
+    s = platform.system()
+    if s == "Darwin":
+        return ["/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+                "/Applications/Chromium.app/Contents/MacOS/Chromium",
+                "/Applications/Brave Browser.app/Contents/MacOS/Brave Browser",
+                "/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge"]
+    if s == "Windows":
+        pf = [os.environ.get("PROGRAMFILES", r"C:\Program Files"),
+              os.environ.get("PROGRAMFILES(X86)", r"C:\Program Files (x86)"),
+              os.environ.get("LOCALAPPDATA", "")]
+        return [rf"{b}\Google\Chrome\Application\chrome.exe" for b in pf if b] + \
+               [rf"{pf[0]}\Microsoft\Edge\Application\msedge.exe"]
+    return ["/usr/bin/google-chrome", "/usr/bin/google-chrome-stable",
+            "/usr/bin/chromium", "/usr/bin/chromium-browser", "/snap/bin/chromium"]
 
 
 def find_chrome() -> str | None:
-    for c in CHROME_CANDIDATES:
+    for c in _chrome_candidates():
         if Path(c).exists():
             return c
-    for name in ("google-chrome", "chromium", "chromium-browser", "chrome"):
+    for name in ("google-chrome", "chromium", "chromium-browser", "chrome", "msedge"):
         p = shutil.which(name)
         if p:
             return p
     return None
+
+
+def open_path(p: Path) -> None:
+    """Open a file with the OS default app, cross-platform."""
+    s = platform.system()
+    try:
+        if s == "Darwin":
+            subprocess.run(["open", str(p)], check=False)
+        elif s == "Windows":
+            os.startfile(str(p))  # type: ignore[attr-defined]
+        else:
+            subprocess.run(["xdg-open", str(p)], check=False)
+    except (OSError, AttributeError):
+        pass
 
 
 def html_to_png(html_path: Path, png_path: Path, width: int = 1100, scale: int = 2) -> Path | None:
@@ -65,6 +91,11 @@ def html_to_png(html_path: Path, png_path: Path, width: int = 1100, scale: int =
     return png_path if png_path.exists() else None
 
 
+def default_lang() -> str:
+    loc = (os.environ.get("LC_ALL") or os.environ.get("LANG") or "").lower()
+    return "zh" if loc.startswith("zh") else "en"
+
+
 def build_adapters(args):
     adapters = []
     if args.claude_root != "skip":
@@ -93,6 +124,8 @@ def run(argv=None) -> int:
     p.add_argument("--claude-root", default="")   # "" = default home; "skip" disables
     p.add_argument("--codex-root", default="")
     p.add_argument("--cline-root", default="")
+    p.add_argument("--lang", choices=["en", "zh"], default=default_lang(),
+                   help="card language (default: from system locale)")
     args = p.parse_args(argv)
 
     adapters = build_adapters(args)
@@ -120,7 +153,7 @@ def run(argv=None) -> int:
 
     out = Path(args.out) if args.out else (Path(__file__).parent.parent / "out"
           / f"wrapped-{datetime.now():%Y%m%d}.html")
-    render.render(data, out)
+    render.render(data, out, lang=args.lang)
     print(f"wrapped → {out}  ({data['totals']['sessions']} sessions, "
           f"${data['totals']['cost_usd']:.0f})")
 
@@ -131,7 +164,7 @@ def run(argv=None) -> int:
             print(f"png     → {png}")
 
     if not args.no_open:
-        subprocess.run(["open", str(png or out)], check=False)
+        open_path(png or out)
     return 0
 
 

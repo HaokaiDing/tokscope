@@ -132,20 +132,19 @@ def cache_stats(records):
 
 
 def personality(d) -> dict:
+    # language-neutral tag keys; the template translates them per --lang
     r = d["rhythm"]
     tokens = d["totals"]["tokens"]
     tags = []
     if r.get("night_owl_pct", 0) >= 30:
-        tags.append("夜猫子")
+        tags.append("night_owl")
     if tokens >= 500_000_000:
-        tags.append("Token 鲸鱼")
+        tags.append("token_whale")
     if tokens and d["cache"]["read_tokens"] > tokens * 0.3:
-        tags.append("缓存抠门大师")
+        tags.append("cache_miser")
     if len(d["tool_breakdown"]) >= 3:
-        tags.append("多栖玩家")
-    title = " · ".join(tags) if tags else "稳健玩家"
-    icon = "moon" if "夜猫子" in title else "flame"
-    return {"title": title, "icon": icon}
+        tags.append("polyglot")
+    return {"tags": tags, "icon": "moon" if "night_owl" in tags else "flame"}
 
 
 def compute_all(records, pings, tz=timezone.utc) -> dict:

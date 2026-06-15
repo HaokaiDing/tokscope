@@ -1,19 +1,30 @@
 from __future__ import annotations
 import json
+import os
+import platform
 from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 from .base import UsageRecord, ActivityPing
 
 # Cline is a VS Code extension; tasks live under each editor's globalStorage.
-_REL = "Library/Application Support/{app}/User/globalStorage/saoudrizwan.claude-dev/tasks"
 _APPS = ["Code", "Cursor", "Code - Insiders", "Windsurf", "VSCodium"]
+_TAIL = "User/globalStorage/saoudrizwan.claude-dev/tasks"
+
+
+def _editor_bases() -> list[Path]:
+    home = Path.home()
+    s = platform.system()
+    if s == "Darwin":
+        return [home / "Library" / "Application Support" / a for a in _APPS]
+    if s == "Windows":
+        appdata = Path(os.environ.get("APPDATA", home / "AppData" / "Roaming"))
+        return [appdata / a for a in _APPS]
+    return [home / ".config" / a for a in _APPS]   # Linux
 
 
 def default_task_dirs() -> list[Path]:
-    home = Path.home()
-    return [home / _REL.format(app=a) for a in _APPS
-            if (home / _REL.format(app=a)).exists()]
+    return [base / _TAIL for base in _editor_bases() if (base / _TAIL).exists()]
 
 
 class ClineAdapter:
