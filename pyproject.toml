@@ -8,7 +8,7 @@ license = "MIT"
 license-files = ["LICENSE"]
 authors = [{ name = "Haokai Ding" }]
 keywords = ["claude-code", "codex", "cline", "tokens", "usage", "wrapped", "cli"]
-dependencies = ["jinja2>=3.1"]
+dependencies = []   # zero runtime deps — stdlib only
 classifiers = [
     "Environment :: Console",
     "Intended Audience :: Developers",

@@ -15,4 +15,4 @@ def test_render_self_contained(tmp_path):
     assert out.exists()
     assert "http://" not in html and "https://" not in html
     assert "tokscope" in html.lower()
-    assert "__WRAPPED_DATA__" not in html
+    assert "__TOKSCOPE_DATA__" not in html and "__TOKSCOPE_LANG__" not in html
